@@ -14,7 +14,8 @@ int main(int argc, char *argv[])
    int mysock;
    char buff[1024];
    int rval;
-
+   int value;
+   int bytesize;
 
     /* Create Socket */
     sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -56,9 +57,25 @@ int main(int argc, char *argv[])
 	    else
 	      printf("MSG: %s\n", buff);
               
-             printf("Got the message (rval = %d)\n", rval);
- 
-	      close(mysock);
+//             printf("Got the message (rval = %d)\n", rval);
+         
+             getsockopt(sock, SOL_SOCKET, SO_SNDBUF,&value,&bytesize);
+             if(value == 0)
+             {
+                   printf("UNABLE TO GET\n",value);
+             }
+	     else
+            	 printf("GET SO_SNDBUF : %d\n", value);
+             value = 1;
+             setsockopt(sock, SOL_SOCKET, SO_SNDBUF, &value, sizeof(value));
+                    printf("ALREADY SET \n");
+             getsockopt(sock, SOL_SOCKET, SO_SNDBUF, &value, &bytesize);
+             if(value == 0)
+                  printf("UNABLE TO GET \n");
+             else
+                  printf("get new SO_SNDBUF : %d\n",value); 
+         
+	     close(mysock);
 
 	   }
 	} while (1); 
